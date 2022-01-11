@@ -1,5 +1,4 @@
 package me.justinjaques.dirtblast;
-
 import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +11,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 
 public class DirtBlastListener implements Listener {
 
+
     @EventHandler
     public void onClick(PlayerInteractEvent event) {
         if(event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK){
@@ -20,7 +20,7 @@ public class DirtBlastListener implements Listener {
 
            // if(bPlayer.canBend(CoreAbility.getAbility(DirtBlast.class))) {
             new DirtBlast(player);
-            ProjectKorra.log.info("Dirtblast Fired!");
+
             //}
 
         }
