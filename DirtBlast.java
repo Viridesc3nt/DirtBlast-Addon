@@ -1,4 +1,4 @@
-package org.justinjaques.earthabilites;
+package me.justinjaques.dirtblast;
 
 import java.util.List;
 
@@ -27,129 +27,136 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 
 public class DirtBlast extends EarthAbility implements AddonAbility {
-	private static final String AUTHOR = "Viridescent_";
-	private static final String VERSION = "1.0.0";
-	private static final String NAME = "DirtBlast";
-	private static final long COOLDOWN = 2000;
-	
-	private static final double DAMAGE = 1;
-	private static final double RANGE = 25;
-	private double distanceTravelled;
-	
-	
-	
-	private DirtBlastListener listener;
-	private Permission perm;
-	
-	private Location location;
-	private Vector direction;
+    private static final String AUTHOR = "Viridescent_";
+    private static final String VERSION = "1.0.0";
+    private static final String NAME = "DirtBlast";
+    private static final long COOLDOWN = 2000;
 
-	public DirtBlast(Player player) {
-		super(player);
-		
-		location = player.getEyeLocation();
-		direction = player.getLocation().getDirection();
-		direction.multiply(0.8);
-		bPlayer.addCooldown(this);
-		distanceTravelled = 0;
-		
-		start();
-	}
-	
+    private static final double DAMAGE = 1;
+    private static final double RANGE = 25;
+    private double distanceTravelled;
 
-	@Override
-	public long getCooldown() {
-		// TODO Auto-generated method stub
-		return COOLDOWN;
-	}
 
-	@Override
-	public Location getLocation() {
-		// TODO Auto-generated method stub
-		return location;
-	}
 
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return NAME;
-	}
+    private DirtBlastListener listener;
+    private Permission perm;
 
-	@Override
-	public boolean isHarmlessAbility() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    private Location location;
+    private Vector direction;
 
-	@Override
-	public boolean isSneakAbility() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public DirtBlast(Player player) {
+        super(player);
 
-	@Override
-	public void progress() {
-		if(bPlayer.canBend(this)) {
-			remove();	
-			return;
-		}
-		
-		if(location.getBlock().getType().isSolid()) {
-			remove();
-			return;
-		}
-		
-		if(distanceTravelled > RANGE) {
-			remove();
-			return;
-		}
-		affectTargets();
-		ParticleEffect.CRIT_MAGIC.display(location, 0, direction.getX(), direction.getY(), direction.getZ());
-		location.add(direction);
-		distanceTravelled += direction.length();
-	}
-	
-	private void affectTargets() {
-		List<Entity> targets = GeneralMethods.getEntitiesAroundPoint(location, 1);
-		for (Entity target : targets) {
-			if(target.getUniqueId() == player.getUniqueId()) {
-				continue;
-			}
-			target.setVelocity(direction);
-			DamageHandler.damageEntity(target, DAMAGE, this);
-			target.setFireTicks(0);
-		}
-		
-		
-	}	
+        location = player.getEyeLocation();
+        direction = player.getLocation().getDirection();
+        direction.multiply(0.8);
+        bPlayer.addCooldown(this);
+        distanceTravelled = 0;
 
-	@Override
-	public String getAuthor() {
-		// TODO Auto-generated method stub
-		return AUTHOR;
-	}
+        start();
+    }
 
-	@Override
-	public String getVersion() {
-		// TODO Auto-generated method stub
-		return VERSION;
-	}
+    @Override
+    public void load() {
+        ProjectKorra.log.info(this.getName() + " by " + this.getAuthor() + " " + this.getVersion() + " has been loaded!");
+        listener = new DirtBlastListener();
+        ProjectKorra.plugin.getServer().getPluginManager().registerEvents(listener, ProjectKorra.plugin);
+        perm = new Permission("bending.ability.DirtBlast");
+        ProjectKorra.plugin.getServer().getPluginManager().addPermission(perm);
 
-	@Override
-	public void load() {
-		ProjectKorra.log.info(this.getName() + " by " + this.getAuthor() + " " + this.getVersion() + " has been loaded!");
-		listener = new DirtBlastListener();
-		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(listener, ProjectKorra.plugin);
-		perm = new Permission("bending.ability.DirtBlast");
-		ProjectKorra.plugin.getServer().getPluginManager().addPermission(perm);
-		
-	}
+    }
 
-	@Override
-	public void stop() {
-		HandlerList.unregisterAll(listener);
-		ProjectKorra.plugin.getServer().getPluginManager().removePermission(perm);
-		
-	}
+
+    @Override
+    public long getCooldown() {
+        // TODO Auto-generated method stub
+        return COOLDOWN;
+    }
+
+    @Override
+    public Location getLocation() {
+        // TODO Auto-generated method stub
+        return location;
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return NAME;
+    }
+
+    @Override
+    public boolean isHarmlessAbility() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isSneakAbility() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void progress() {
+        if(!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+            remove();
+            return;
+        }
+
+        if(location.getBlock().getType().isSolid()) {
+            remove();
+            return;
+        }
+
+        if(distanceTravelled > RANGE) {
+            remove();
+            return;
+        }
+        affectTargets();
+        ParticleEffect.CRIT_MAGIC.display(location, 0, direction.getX(), direction.getY(), direction.getZ());
+        location.add(direction);
+        distanceTravelled += direction.length();
+    }
+
+    private void affectTargets() {
+        ProjectKorra.log.info("EarthBlast Fired!");
+        List<Entity> targets = GeneralMethods.getEntitiesAroundPoint(location, 1);
+        for (Entity target : targets) {
+            if(target.getUniqueId() == player.getUniqueId()) {
+                continue;
+            }
+            target.setVelocity(direction);
+            DamageHandler.damageEntity(target, DAMAGE, this);
+            target.setFireTicks(0);
+        }
+
+
+    }
+
+    @Override
+    public String getAuthor() {
+        // TODO Auto-generated method stub
+        return AUTHOR;
+    }
+
+    @Override
+    public String getInstructions() {
+        return "&c&lSimply LEFT-CLICK at a target to shoot a stream of dirt into their eyes, dealing damage and temporarily blinding them";
+    }
+
+    @Override
+    public String getVersion() {
+        // TODO Auto-generated method stub
+        return VERSION;
+    }
+
+
+    @Override
+    public void stop() {
+        HandlerList.unregisterAll(listener);
+        ProjectKorra.plugin.getServer().getPluginManager().removePermission(perm);
+
+    }
 
 }
