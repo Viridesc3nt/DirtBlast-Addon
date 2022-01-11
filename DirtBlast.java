@@ -9,6 +9,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.bukkit.Location;
 
@@ -27,15 +29,14 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 
 
 public class DirtBlast extends EarthAbility implements AddonAbility {
-    private static final String AUTHOR = "Viridescent_";
-    private static final String VERSION = "1.0.0";
+    private static final String AUTHOR = "&2Viridescent_";
+    private static final String VERSION = "&21.0.0";
     private static final String NAME = "DirtBlast";
-    private static final long COOLDOWN = 2000;
+    private static final long COOLDOWN = 7000;
 
     private static final double DAMAGE = 1;
     private static final double RANGE = 25;
     private double distanceTravelled;
-
 
 
     private DirtBlastListener listener;
@@ -49,11 +50,14 @@ public class DirtBlast extends EarthAbility implements AddonAbility {
 
         location = player.getEyeLocation();
         direction = player.getLocation().getDirection();
-        direction.multiply(0.8);
-        bPlayer.addCooldown(this);
-        distanceTravelled = 0;
+        direction.multiply(0.5);
 
-        start();
+        distanceTravelled = 0;
+        if (!bPlayer.isOnCooldown(this)) {
+            start();
+            bPlayer.addCooldown(this);
+        }
+
     }
 
     @Override
@@ -114,20 +118,25 @@ public class DirtBlast extends EarthAbility implements AddonAbility {
             return;
         }
         affectTargets();
-        ParticleEffect.CRIT_MAGIC.display(location, 0, direction.getX(), direction.getY(), direction.getZ());
+        ParticleEffect.SQUID_INK.display(location, 4, direction.getX(), direction.getY(), direction.getZ());
+        playSandbendingSound(location);
+
         location.add(direction);
         distanceTravelled += direction.length();
     }
 
     private void affectTargets() {
-        ProjectKorra.log.info("EarthBlast Fired!");
+
         List<Entity> targets = GeneralMethods.getEntitiesAroundPoint(location, 1);
         for (Entity target : targets) {
             if(target.getUniqueId() == player.getUniqueId()) {
                 continue;
             }
-            target.setVelocity(direction);
+
             DamageHandler.damageEntity(target, DAMAGE, this);
+            if (target instanceof LivingEntity) {
+                ((LivingEntity)target).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 120, 2));
+            }
             target.setFireTicks(0);
         }
 
