@@ -14,7 +14,7 @@ public class DirtBlastListener implements Listener {
 
     @EventHandler
     public void onClick(PlayerInteractEvent event) {
-        if(event.getAction() != Action.LEFT_CLICK_AIR || event.getAction() != Action.LEFT_CLICK_BLOCK){
+        if(event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK){
             Player player = event.getPlayer();
             BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
@@ -27,3 +27,6 @@ public class DirtBlastListener implements Listener {
             return;
 
         }
+
+    }
+}
