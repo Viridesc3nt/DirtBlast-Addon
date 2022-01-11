@@ -137,7 +137,7 @@ public class DirtBlast extends EarthAbility implements AddonAbility {
 
 	@Override
 	public void load() {
-		System.out.println("DirtBlast on!");
+		ProjectKorra.log.info(this.getName() + " by " + this.getAuthor() + " " + this.getVersion() + " has been loaded!");
 		listener = new DirtBlastListener();
 		ProjectKorra.plugin.getServer().getPluginManager().registerEvents(listener, ProjectKorra.plugin);
 		perm = new Permission("bending.ability.DirtBlast");
