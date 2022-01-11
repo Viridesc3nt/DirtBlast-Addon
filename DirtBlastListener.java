@@ -23,10 +23,8 @@ public class DirtBlastListener implements Listener {
             ProjectKorra.log.info("Dirtblast Fired!");
             //}
 
-        } else {
-            return;
-
         }
+
 
     }
 }
