@@ -2,8 +2,7 @@ package me.justinjaques.dirtblast;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -118,7 +117,7 @@ public class DirtBlast extends EarthAbility implements AddonAbility {
             return;
         }
         affectTargets();
-        ParticleEffect.SQUID_INK.display(location, 4, direction.getX(), direction.getY(), direction.getZ());
+        ParticleEffect.REDSTONE.display(location, 10, direction.getX(), 0.5, direction.getZ(), new Particle.DustOptions(Color.fromRGB(165, 80 ,42), (float) 1.2));
         playSandbendingSound(location);
 
         location.add(direction);
