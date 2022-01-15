@@ -18,10 +18,9 @@ public class DirtBlastListener implements Listener {
             Player player = event.getPlayer();
             BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-           // if(bPlayer.canBend(CoreAbility.getAbility(DirtBlast.class))) {
-            new DirtBlast(player);
-
-            //}
+            if(bPlayer.canBend(CoreAbility.getAbility(DirtBlast.class))) {
+                new DirtBlast(player);
+            }
 
         }
 
